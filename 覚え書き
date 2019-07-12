@@ -1,1 +1,49 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Runtime.Serialization;
+
+namespace Model
+{
+    /// <summary>
+    /// ユースケース：システム起動
+    /// </summary>
+    /// <remarks>
+    /// ・起動中表示
+    /// ・起動過程の進捗状況表示
+    /// ・完了ダイアログ表示
+    /// </remarks>
+    public class UseCase1 : UseCaseBase
+    {
+        [DataContract]
+        public class Display : ModelBase
+        {
+            [DataMember]
+            public string ViewID = "UseCase1-1";
+            [DataMember]
+            public string MainMessage = "システム起動中です";
+            [DataMember]
+            public string DetailMessage = ".";
+            [DataMember]
+            public bool OpenCompleteDialog = false;
+        }
+
+        public override ModelBase DisplayModel { get; } = new Display();
+
+        public override void Start()
+        {
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
 
