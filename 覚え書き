@@ -122,6 +122,51 @@ namespace Model
 }
 
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ModelBridge;
+using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
+
+namespace Model
+{
+    public static class Controler
+    {
+        public static UseCaseBase NowUseCase;
+
+        /// <summary>
+        /// 開始
+        /// </summary>
+        public static void Start()
+        {
+            Console.WriteLine($"Controler.Start()");
+
+            ModelHub.OnMessage += ModelHub_OnMessage;
+
+            NowUseCase = new UseCase0();
+        }
+
+        /// <summary>
+        /// 終了
+        /// </summary>
+        public static void End()
+        {
+            Console.WriteLine($"Controler.Start()");
+        }
+
+        static void ModelHub_OnMessage(string key, string id, string message)
+        {
+            if (key == Const.SEND_DISPLAY_MODEL)
+            {
+                string json = JsonUtility.Serialize(Controler.NowUseCase.DisplayModel);
+                GlobalHost.ConnectionManager.GetHubContext<ModelHub>().Clients.All.Message(Const.SEND_DISPLAY_MODEL, id, json);
+            }
+        }
+    }
+}
 
 
 
