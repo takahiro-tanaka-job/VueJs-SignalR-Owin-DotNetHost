@@ -39,6 +39,87 @@ namespace Model
 }
 
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+using System.Threading.Tasks;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+
+namespace Model
+{
+    public static class JsonUtility
+    {
+        /// <summary>
+        /// 任意のオブジェクトを JSON メッセージへシリアライズします。
+        /// </summary>
+        public static string Serialize(object graph)
+        {
+            using (var stream = new MemoryStream())
+            {
+                var serializer = new DataContractJsonSerializer(graph.GetType());
+                serializer.WriteObject(stream, graph);
+                return Encoding.UTF8.GetString(stream.ToArray());
+            }
+        }
+
+        /// <summary>
+        /// Jsonメッセージをオブジェクトへデシリアライズします。
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// 【 UseSimpleDictionaryFormat = true の場合】
+        ///     [
+        ///         {
+        ///             "ID": 0,
+        ///             "Name": "Taka",
+        ///             "Attributes": {
+        ///                 "key1": "value1",
+        ///                 "key2": "value2",
+        ///                 "key3": "value3"
+        ///             }
+        ///         }
+        ///     ]
+        ///     
+        /// 【 UseSimpleDictionaryFormat = ralse の場合】
+        ///     [
+        ///         {
+        ///             "ID": 0,
+        ///             "Name": "Taka",
+        ///             "Attributes": [
+        ///                 {
+        ///                     "Key": "key1", 
+        ///                     "Value": "value1"
+        ///                 }, 
+        ///                 {
+        ///                     "Key": "key2", 
+        ///                     "Value": "value2"
+        ///                 }, 
+        ///                 {
+        ///                     "Key": "key3", 
+        ///                     "Value": "value3"
+        ///                 }
+        ///             ]
+        ///         }
+        ///     ]
+        /// 
+        /// </remarks>
+        public static T Deserialize<T>(string message, bool useSimpleDictionaryFormat = true)
+        {
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(message)))
+            {
+                var setting = new DataContractJsonSerializerSettings()
+                {
+                    UseSimpleDictionaryFormat = useSimpleDictionaryFormat,
+                };
+                var serializer = new DataContractJsonSerializer(typeof(T), setting);
+                return (T)serializer.ReadObject(stream);
+            }
+        }
+    }
+}
 
 
 
