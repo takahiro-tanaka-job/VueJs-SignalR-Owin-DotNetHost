@@ -168,6 +168,34 @@ namespace Model
     }
 }
 
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.Owin;
+using Owin;
+using Microsoft.Owin.Cors;
+using Microsoft.AspNet.SignalR;
+
+namespace ModelBridge
+{
+    public class ModelHub : Hub
+    {
+        public static event Action<string, string, string> OnMessage;
+
+        public ModelHub()
+        {
+            Debug.WriteLine("Constructor : ModelHub");
+        }
+
+        public void Message(string key, string id, string message)
+        {
+            Clients.All.Message(key, id, message);
+
+            if (ModelHub.OnMessage != null)
+                ModelHub.OnMessage(key, id, message);
+        }
+    }
+}
 
 
 
